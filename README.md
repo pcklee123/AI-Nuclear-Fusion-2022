@@ -2,6 +2,7 @@
 - MSYS2 Installed
 - Add gcc to PATH in MSYS
     - In the root directory, run `export PATH=$PATH:/mingw64/bin`
+    - this can also be added in windows "edit system environment variables" , "Path". Add C:\msys64\usr\bin and C:\msys64\....\bin
 
 To install fftw3 recompiled with OMP enabled:
 ```
