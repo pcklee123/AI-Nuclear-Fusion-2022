@@ -1,4 +1,10 @@
 #include "include/traj.h"
+#include <vtk/vtkSmartPointer.h>
+#include <vtk/vtkStructuredGrid.h>
+#include <vtk/vtkXMLStructuredGridWriter.h>
+#include <vtk/vtkDoubleArray.h>
+#include <vtk/vtkZLibDataCompressor.h>
+
 void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd[3], double t,
                 float np[2][n_space_divz][n_space_divy][n_space_divx], float currentj[2][3][n_space_divz][n_space_divy][n_space_divx],
                 float V[n_space_divz][n_space_divy][n_space_divx],
@@ -7,7 +13,7 @@ void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd
 {
 #ifdef printDensity
   save_vti("Ne", i_time, n_space_div, posL, dd, n_cells, 1, t, (reinterpret_cast<const char *>(np[0])), "Float32", sizeof(float));
-  // save_vti("Ne", i_time, n_space_div, posL, dd, n_cells, 1, t, np[0], "Float32", sizeof(float));
+ // save_vti_c("Ne", i_time, n_space_div, posL, dd, n_cells, 2, t, np, "Float32", sizeof(float));
   save_vti_c("je", i_time, n_space_div, posL, dd, n_cells, 3, t, currentj[0], "Float32", sizeof(float));
 #endif
 #ifdef printV
@@ -72,15 +78,19 @@ void save_vti_c(string filename, int i,
     cout << "Error: Cannot write file " << filename << " - too many components" << endl;
     return;
   }
-  auto *data = new float[n_space_divz][n_space_divy][n_space_divx][3];
-  for (int k = 0; k < n_space_div[2]; ++k)
+  int xi = (n_space_divx - 1) / maxcells + 1;
+  int yj = (n_space_divy - 1) / maxcells + 1;
+  int zk = (n_space_divz - 1) / maxcells + 1;
+
+  auto *data = new float[min(maxcells, n_space_divz)][min(maxcells, n_space_divy)][min(maxcells, n_space_divx)][3];
+  for (int k = 0; k < maxcells; ++k)
   {
-    for (int j = 0; j < n_space_div[1]; ++j)
+    for (int j = 0; j < maxcells; ++j)
     {
-      for (int i = 0; i < n_space_div[0]; ++i)
+      for (int i = 0; i < maxcells; ++i)
       {
         for (int c = 0; c < ncomponents; ++c)
-          data[k][j][i][c] = data1[c][k][j][i];
+          data[k][j][i][c] = data1[c][k * zk][j * yj][i * xi];
       }
     }
   }
@@ -89,15 +99,15 @@ void save_vti_c(string filename, int i,
   std::ofstream os(outpath + filename + "_" + to_string(i) + ".vti", std::ios::binary | std::ios::out);
   os << "<VTKFile type=\"ImageData\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\"> \n ";
   os << "<ImageData WholeExtent=\"0 ";
-  os << to_string(n_space_div[0] - 1) + " 0 " + to_string(n_space_div[1] - 1) + " 0 " + to_string(n_space_div[2] - 1) + "\" ";
+  os << to_string(n_space_div[0] / xi - 1) + " 0 " + to_string(n_space_div[1] / yj - 1) + " 0 " + to_string(n_space_div[2] / zk - 1) + "\" ";
   os << "Origin=\"" + to_string(posl[0]) + " " + to_string(posl[1]) + " " + to_string(posl[2]) + "\"";
-  os << " Spacing=\"" + to_string(dd[0]) + " " + to_string(dd[1]) + " " + to_string(dd[2]) + "\" ";
+  os << " Spacing=\"" + to_string(dd[0] * xi) + " " + to_string(dd[1] * yj) + " " + to_string(dd[2] * zk) + "\" ";
   os << "Direction=\"1 0 0 0 1 0 0 0 1\"> \n";
   os << "<FieldData>\n";
   os << "<DataArray type=\"Float64\" Name=\"TimeValue\" NumberOfTuples=\"1\" format=\"appended\" RangeMin=\"0\" RangeMax=\"0\" offset=\"0\"/>\n";
   os << "</FieldData>\n";
   os << "<Piece Extent=\"0 ";
-  os << to_string(n_space_div[0] - 1) + " 0 " + to_string(n_space_div[1] - 1) + " 0 " + to_string(n_space_div[2] - 1) + "\">\n";
+  os << to_string(n_space_div[0]/xi - 1) + " 0 " + to_string(n_space_div[1]/yj - 1) + " 0 " + to_string(n_space_div[2]/zk - 1) + "\">\n";
   os << "<PointData Scalars=\"" + filename + "\">\n";
   os << "<DataArray type=\"" + typeofdata + "\" Name=\"" + filename + "\" NumberOfComponents=\"" + to_string(ncomponents) + "\" format=\"appended\" RangeMin=\"0\" RangeMax=\"0\" offset=\"16\" />\n";
   os << "  </PointData>\n";
@@ -110,10 +120,10 @@ void save_vti_c(string filename, int i,
   os.write(reinterpret_cast<const char *>(&num1), std::streamsize(sizeof(num1)));
   // single time double
   os.write(reinterpret_cast<const char *>(&t), std::streamsize(sizeof(double)));
-  num1 = num * ncomponents * bytesperdata;
+  num1 = num * ncomponents * bytesperdata / xi / yj / zk;
   os.write(reinterpret_cast<const char *>(&num1), std::streamsize(sizeof(num1)));
   // data
-  os.write((reinterpret_cast<const char *>(data)), std::streamsize(num * ncomponents * bytesperdata));
+  os.write((reinterpret_cast<const char *>(data)), std::streamsize(num * ncomponents * bytesperdata / xi / yj / zk));
   os << "</AppendedData>\n";
   os << "</VTKFile>";
   os.close();

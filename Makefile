@@ -5,9 +5,11 @@ IDIR = include
 
 #https://stackoverflow.com/questions/14492436/g-optimization-beyond-o3-ofast
 CC=g++
-CFLAGS= -I$(IDIR) -fopenmp -fopenmp-simd -Ofast -march=native -malign-double -ftree-parallelize-loops=8 -std=c++2b
-LIBS= -lm -lgsl -lOpenCL.dll -lfftw3f -lomp.dll
-AFLAGS= -flto -funroll-loops -fno-signed-zeros -fno-trapping-math -D_GLIBCXX_PARALLEL #-fgcse-sm -fgcse-las
+CFLAGS= -I$(IDIR) -I /ucrt64/include/vtk -L /ucrt64/lib/vtk -fopenmp -fopenmp-simd -Ofast -march=native -malign-double -ftree-parallelize-loops=8 -std=c++2b
+#LIBS= -lm -lgsl -lOpenCL.dll -lfftw3f -lomp.dll -lfftw3f_omp
+LIBS= -lm -lgsl -lOpenCL.dll  -lgomp -lfftw3f_omp -lfftw3f  -lvtksys.dll -lvtkCommonCore.dll #-lvtkFiltering.dll -lvtkImaging.dll -lvtkGraphics.dll -lvtkGenericFiltering.dll -lvtkIO.dll
+
+AFLAGS= -flto -funroll-loops -fno-signed-zeros -fno-trapping-math -D_GLIBCXX_PARALLEL -fgcse-sm -fgcse-las
 
 #CC=clang++
 #CFLAGS=-I$(IDIR) -fopenmp -fopenmp-simd -O3 -Ofast -mavx -mfma -ffast-math -ftree-vectorize -march=native -fomit-frame-pointer -malign-double -std=c++2b

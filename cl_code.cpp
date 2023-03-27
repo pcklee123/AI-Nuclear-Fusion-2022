@@ -89,7 +89,7 @@ void cl_start()
     cl::Platform default_platform = platforms[0];
     std::cout << "Using platform: " << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
     default_platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
-    cl::Device default_device = devices[0];
+    cl::Device default_device = devices[1];
     std::cout << "\t\tDevice Name: " << default_device.getInfo<CL_DEVICE_NAME>() << "\n";
     std::cout << "OpenCL Version: " << default_device.getInfo<CL_DEVICE_VERSION>() << std::endl;
 
