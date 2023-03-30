@@ -26,7 +26,7 @@
 #define printE //print out E field
 //#define FileIn //whether to load from input file (unused)
 #define RamDisk //whether to use RamDisk
-
+#define maxcells 32
 using namespace std;
 //save file info - initialize filepath
 #ifdef RamDisk
