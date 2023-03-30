@@ -6,6 +6,13 @@
 
 ## Introduction
 This project simulates Magnetized Liner Inertial Fusion (MagLIF). [Specifically, it simulates charged particles and their trajectories in β and e fields.]?
+- Setup particles for MagLIF
+    - Two sets of plasmas
+        - 1. Low density plasma cylinder
+        - 2. High density thin cylindrical shell around plasma cylinder.
+- Setup external fields. 
+    - Electric field along the cylinder.
+
 
 ## Getting Started
 ### Prerequisites
