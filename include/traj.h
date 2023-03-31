@@ -115,7 +115,7 @@ void save_vti_c2(string filename, int i,
 void save_vti_c(string filename, int i,
                 unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t,
                 float data1[3][n_space_divz][n_space_divy][n_space_divz], string typeofdata, int bytesperdata);
-void save_vti(string filename, int i, unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t, const char *data, string typeofdata, int sizeofdata);
+void save_vti(string filename, int i, unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t, float data[n_space_divz][n_space_divy][n_space_divz], string typeofdata, int sizeofdata);
 void save_pvd(string filename, int ndatapoints);
 void save_vtp(string filename, int i, uint64_t num, int ncomponents, double t, const char *data, const char *points);
 void set_initial_pos_vel(int n_part_types, int n_particles, float *pos0, float *pos1, float *sigma, int *q, int *m, int *nt);

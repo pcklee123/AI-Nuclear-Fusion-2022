@@ -1,9 +1,9 @@
 #include "include/traj.h"
-#include <vtk/vtkSmartPointer.h>
-#include <vtk/vtkStructuredGrid.h>
-#include <vtk/vtkXMLStructuredGridWriter.h>
-#include <vtk/vtkDoubleArray.h>
-#include <vtk/vtkZLibDataCompressor.h>
+//#include <vtk/vtkSmartPointer.h>
+//#include <vtk/vtkStructuredGrid.h>
+//#include <vtk/vtkXMLStructuredGridWriter.h>
+//#include <vtk/vtkFloatArray.h>
+//#include <vtk/vtkZLibDataCompressor.h>
 
 void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd[3], double t,
                 float np[2][n_space_divz][n_space_divy][n_space_divx], float currentj[2][3][n_space_divz][n_space_divy][n_space_divx],
@@ -12,8 +12,8 @@ void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd
                 float KE[2][n_output_part], float posp[2][n_output_part][3])
 {
 #ifdef printDensity
-  save_vti("Ne", i_time, n_space_div, posL, dd, n_cells, 1, t, (reinterpret_cast<const char *>(np[0])), "Float32", sizeof(float));
- // save_vti_c("Ne", i_time, n_space_div, posL, dd, n_cells, 2, t, np, "Float32", sizeof(float));
+  save_vti("Ne", i_time, n_space_div, posL, dd, n_cells, 1, t, np[0], "Float32", sizeof(float));
+  // save_vti_c("Ne", i_time, n_space_div, posL, dd, n_cells, 2, t, np[0], "Float32", sizeof(float));
   save_vti_c("je", i_time, n_space_div, posL, dd, n_cells, 3, t, currentj[0], "Float32", sizeof(float));
 #endif
 #ifdef printV
@@ -30,9 +30,10 @@ void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd
   save_vtp("d", i_time, n_output_part, 1, t, (reinterpret_cast<const char *>(&KE[1][0])), (reinterpret_cast<const char *>(&posp[1][0][0])));
 #endif
 }
+
 void save_vti(string filename, int i,
               unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t,
-              const char *data, string typeofdata, int bytesperdata)
+              float data[n_space_divz][n_space_divy][n_space_divz], string typeofdata, int bytesperdata)
 {
   std::ofstream os(outpath + filename + "_" + to_string(i) + ".vti", std::ios::binary | std::ios::out);
   os << "<VTKFile type=\"ImageData\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\"> \n ";
@@ -61,11 +62,41 @@ void save_vti(string filename, int i,
   num1 = num * ncomponents * bytesperdata;
   os.write(reinterpret_cast<const char *>(&num1), std::streamsize(sizeof(num1)));
   // data
-  os.write(data, std::streamsize(num * ncomponents * bytesperdata));
+  os.write(reinterpret_cast<const char *>(&data[0][0][0]), std::streamsize(num * ncomponents * bytesperdata));
   os << "</AppendedData>\n";
   os << "</VTKFile>";
   os.close();
 }
+
+/*
+void save_vti(string filename, int i,
+              unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t,
+              float data[n_space_divz][n_space_divy][n_space_divx], string typeofdata, int bytesperdata)
+{
+  int nx = n_space_div[0];
+  int ny = n_space_div[1];
+  int nz = n_space_div[2];
+  // Create a 3D structured grid
+  vtkSmartPointer<vtkStructuredGrid> grid = vtkSmartPointer<vtkStructuredGrid>::New();
+  grid->SetDimensions(n_space_div[0], n_space_div[1], n_space_div[2]);
+ // grid->SetOrigin(posl[0], posl[1], posl[2]);
+  // grid->SetSpacing(dd[0], dd[2], dd[3]);S
+  //  Create an array to store the electric field components
+  vtkSmartPointer<vtkFloatArray> ad = vtkSmartPointer<vtkFloatArray>::New();
+  ad->SetName((filename).c_str());
+  ad->SetNumberOfComponents(1); // e.g. 3 components: Ex, Ey, Ez
+  ad->SetNumberOfTuples(nx * ny * nz);
+  // Fill the array with some values (in this example, all zeros)
+   ad->SetTuple(1, &data[0][0][0]);
+
+  // Write the grid to a compressed .vti file
+  vtkSmartPointer<vtkXMLStructuredGridWriter> writer = vtkSmartPointer<vtkXMLStructuredGridWriter>::New();
+  writer->SetFileName((outpath + filename + "_" + to_string(i) + ".vti").c_str());
+  writer->SetInputData(grid);
+  writer->SetCompressorTypeToZLib();
+  writer->Write();
+}
+*/
 /**
  * This corrects the order of dimensions for view in paraview, as opposed to save_vti which prints the raw data.
  */
@@ -107,7 +138,7 @@ void save_vti_c(string filename, int i,
   os << "<DataArray type=\"Float64\" Name=\"TimeValue\" NumberOfTuples=\"1\" format=\"appended\" RangeMin=\"0\" RangeMax=\"0\" offset=\"0\"/>\n";
   os << "</FieldData>\n";
   os << "<Piece Extent=\"0 ";
-  os << to_string(n_space_div[0]/xi - 1) + " 0 " + to_string(n_space_div[1]/yj - 1) + " 0 " + to_string(n_space_div[2]/zk - 1) + "\">\n";
+  os << to_string(n_space_div[0] / xi - 1) + " 0 " + to_string(n_space_div[1] / yj - 1) + " 0 " + to_string(n_space_div[2] / zk - 1) + "\">\n";
   os << "<PointData Scalars=\"" + filename + "\">\n";
   os << "<DataArray type=\"" + typeofdata + "\" Name=\"" + filename + "\" NumberOfComponents=\"" + to_string(ncomponents) + "\" format=\"appended\" RangeMin=\"0\" RangeMax=\"0\" offset=\"16\" />\n";
   os << "  </PointData>\n";
