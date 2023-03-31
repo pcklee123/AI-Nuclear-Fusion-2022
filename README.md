@@ -17,9 +17,13 @@ This project simulates Magnetized Liner Inertial Fusion (MagLIF). [Specifically,
 ## Getting Started
 ### Prerequisites
 - MSYS2
+- Tools 
+    pacman -S base-devel cmake git mingw-w64-ucrt-x86_64-gcc paraview  
+- Libs 
+    pacman -S mingw-w64-ucrt-x86_64-opencl-headers mingw-w64-ucrt-x86_64-opencl-clhpp mingw-w64-ucrt-x86_64-opencl-icd mingw-w64-ucrt-x86_64-openmp mingw-w64-ucrt-x86_64-gsl mingw-w64-ucrt-x86_64-fftw mingw-w64-ucrt-x86_64-vtk 
+
 - GCC added to PATH in MSYS
     - In the root directory, run `export PATH=$PATH:/mingw64/bin`
-<<<<<<< HEAD
     - this can also be added in windows "edit system environment variables" , "Path". Add C:\msys64\usr\bin and C:\msys64\....\bin
 
 To install fftw3 recompiled with OMP enabled:
@@ -37,8 +41,6 @@ To connect fftw3.h to VSCode, add the path of where fftw3.h is installed (fftw-3
 Add before fftw plans (what does this mean??)
 
 `LIBS= -lm -lgsl -lOpenCL.dll -lomp.dll -lfftw3f -lfftw3f_omp`
-=======
 - Required Libraries
     - GSL
 ## Usage
->>>>>>> 25aed6a063a0bea6499efba7407cd9b89ecfc722

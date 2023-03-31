@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(Tfftw VERSION 0.1.0)
+project(TS3 VERSION 0.1.0)
 
 include(CTest)
 enable_testing()
 
-add_executable(Tfftw main.cpp)
+add_executable(TS3 maTS3in.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
