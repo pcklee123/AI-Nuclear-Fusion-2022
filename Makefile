@@ -28,19 +28,27 @@ CPUS ?= $(shell (nproc --all || sysctl -n hw.ncpu) 2>/dev/null || echo 1)
 MAKEFLAGS += --jobs=$(CPUS)
 
 ODIR=obj
+DODIR=obj_debug
 LDIR=lib
 
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
+DOBJ = $(patsubst %,$(DODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.cpp $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
+$(DODIR)/%.o: %.cpp $(DEPS)
+	$(CC) -g -c -o $@ $< $(CFLAGS)
+
 TS3: $(OBJ)
 	$(CC) -v -o $@ $^ $(CFLAGS) $(LIBS)
+
+debug: $(DOBJ)
+	$(CC) -g -v -o TS3$@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
 clean:
-	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ TS3.exe
+	rm -f $(ODIR)/*.o $(DODIR)/*.o *~ core $(INCDIR)/*~ TS3.exe TS3debug.exe

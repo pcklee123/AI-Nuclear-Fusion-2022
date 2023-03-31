@@ -28,7 +28,7 @@ using namespace std;
 //#define FileIn //whether to load from input file (unused)
 //#define RamDisk //whether to use RamDisk
 #define maxcells 32
-#define cldevice 0
+#define cldevice 1
 
 //save file info - initialize filepath
 #ifdef RamDisk
