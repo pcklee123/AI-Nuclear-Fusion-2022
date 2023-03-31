@@ -4,7 +4,7 @@ project(TS3 VERSION 0.1.0)
 include(CTest)
 enable_testing()
 
-add_executable(TS3 maTS3in.cpp)
+add_executable(TS3 TS3.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
