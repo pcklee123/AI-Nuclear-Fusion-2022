@@ -13,6 +13,7 @@
 #include <string>
 #include <filesystem>
 #include <CL/opencl.hpp>
+#include <vtk/vtksys/Configure.hxx>
 #include <vtk/vtkSmartPointer.h>
 #include <vtk/vtkFloatArray.h>
 #include <vtk/vtkDoubleArray.h>
@@ -21,6 +22,7 @@
 
 #include <vtk/vtkZLibDataCompressor.h>
 #include <vtk/vtkXMLImageDataWriter.h>
+#include <vtk/vtkXMLPolyDataWriter.h>
 #include <vtk/vtkImageData.h>
 #include <vtk/vtkPointData.h>
 using namespace std;
@@ -127,10 +129,11 @@ void save_vti_c2(string filename, int i,
                  float data1[3][n_space_divz2][n_space_divy2][n_space_divz2], string typeofdata, int bytesperdata);
 void save_vti_c(string filename, int i,
                 unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t,
-                float data1[3][n_space_divz][n_space_divy][n_space_divz], string typeofdata, int bytesperdata);
-void save_vti(string filename, int i, unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t, float data[n_space_divz][n_space_divy][n_space_divz], string typeofdata, int sizeofdata);
+                float data1[][n_space_divz][n_space_divy][n_space_divz], string typeofdata, int bytesperdata);
+//void save_vti(string filename, int i, unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t, float data[n_space_divz][n_space_divy][n_space_divz], string typeofdata, int sizeofdata);
 void save_pvd(string filename, int ndatapoints);
-void save_vtp(string filename, int i, uint64_t num, int ncomponents, double t, const char *data, const char *points);
+//void save_vtp(string filename, int i, uint64_t num, int ncomponents, double t, const char *data, const char *points);
+void save_vtp(string filename, int i, uint64_t num, int ncomponents, double t, float data[2][n_output_part], float points[2][n_output_part][3]);
 void set_initial_pos_vel(int n_part_types, int n_particles, float *pos0, float *pos1, float *sigma, int *q, int *m, int *nt);
 void cl_start();
 void cl_set_build_options(float posL[3], float posH[3], float dd[3]);
