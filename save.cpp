@@ -1,9 +1,4 @@
 #include "include/traj.h"
-//#include <vtk/vtkSmartPointer.h>
-//#include <vtk/vtkStructuredGrid.h>
-//#include <vtk/vtkXMLStructuredGridWriter.h>
-//#include <vtk/vtkFloatArray.h>
-//#include <vtk/vtkZLibDataCompressor.h>
 
 void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd[3], double t,
                 float np[2][n_space_divz][n_space_divy][n_space_divx], float currentj[2][3][n_space_divz][n_space_divy][n_space_divx],
@@ -33,70 +28,37 @@ void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd
 
 void save_vti(string filename, int i,
               unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t,
-              float data[n_space_divz][n_space_divy][n_space_divz], string typeofdata, int bytesperdata)
-{
-  std::ofstream os(outpath + filename + "_" + to_string(i) + ".vti", std::ios::binary | std::ios::out);
-  os << "<VTKFile type=\"ImageData\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\"> \n ";
-  os << "<ImageData WholeExtent=\"0 ";
-  os << to_string(n_space_div[0] - 1) + " 0 " + to_string(n_space_div[1] - 1) + " 0 " + to_string(n_space_div[2] - 1) + "\" ";
-  os << "Origin=\"" + to_string(posl[0]) + " " + to_string(posl[1]) + " " + to_string(posl[2]) + "\"";
-  os << " Spacing=\"" + to_string(dd[0]) + " " + to_string(dd[1]) + " " + to_string(dd[2]) + "\" ";
-  os << "Direction=\"1 0 0 0 1 0 0 0 1\"> \n";
-  os << "<FieldData>\n";
-  os << "<DataArray type=\"Float64\" Name=\"TimeValue\" NumberOfTuples=\"1\" format=\"appended\" RangeMin=\"0\" RangeMax=\"0\" offset=\"0\"/>\n";
-  os << "</FieldData>\n";
-  os << "<Piece Extent=\"0 ";
-  os << to_string(n_space_div[0] - 1) + " 0 " + to_string(n_space_div[1] - 1) + " 0 " + to_string(n_space_div[2] - 1) + "\">\n";
-  os << "<PointData Scalars=\"" + filename + "\">\n";
-  os << "<DataArray type=\"" + typeofdata + "\" Name=\"" + filename + "\" NumberOfComponents=\"" + to_string(ncomponents) + "\" format=\"appended\" RangeMin=\"0\" RangeMax=\"0\" offset=\"16\" />\n";
-  os << "  </PointData>\n";
-  os << "<CellData>\n";
-  os << "  </CellData>\n";
-  os << "</Piece>\n";
-  os << "</ImageData>\n";
-  os << "<AppendedData encoding=\"raw\">_";
-  uint64_t num1 = 8;
-  os.write(reinterpret_cast<const char *>(&num1), std::streamsize(sizeof(num1)));
-  // single time double
-  os.write(reinterpret_cast<const char *>(&t), std::streamsize(sizeof(double)));
-  num1 = num * ncomponents * bytesperdata;
-  os.write(reinterpret_cast<const char *>(&num1), std::streamsize(sizeof(num1)));
-  // data
-  os.write(reinterpret_cast<const char *>(&data[0][0][0]), std::streamsize(num * ncomponents * bytesperdata));
-  os << "</AppendedData>\n";
-  os << "</VTKFile>";
-  os.close();
-}
-
-/*
-void save_vti(string filename, int i,
-              unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t,
               float data[n_space_divz][n_space_divy][n_space_divx], string typeofdata, int bytesperdata)
 {
   int nx = n_space_div[0];
   int ny = n_space_div[1];
   int nz = n_space_div[2];
-  // Create a 3D structured grid
-  vtkSmartPointer<vtkStructuredGrid> grid = vtkSmartPointer<vtkStructuredGrid>::New();
-  grid->SetDimensions(n_space_div[0], n_space_div[1], n_space_div[2]);
- // grid->SetOrigin(posl[0], posl[1], posl[2]);
-  // grid->SetSpacing(dd[0], dd[2], dd[3]);S
-  //  Create an array to store the electric field components
-  vtkSmartPointer<vtkFloatArray> ad = vtkSmartPointer<vtkFloatArray>::New();
-  ad->SetName((filename).c_str());
-  ad->SetNumberOfComponents(1); // e.g. 3 components: Ex, Ey, Ez
-  ad->SetNumberOfTuples(nx * ny * nz);
-  // Fill the array with some values (in this example, all zeros)
-   ad->SetTuple(1, &data[0][0][0]);
-
-  // Write the grid to a compressed .vti file
-  vtkSmartPointer<vtkXMLStructuredGridWriter> writer = vtkSmartPointer<vtkXMLStructuredGridWriter>::New();
-  writer->SetFileName((outpath + filename + "_" + to_string(i) + ".vti").c_str());
-  writer->SetInputData(grid);
-  writer->SetCompressorTypeToZLib();
-  writer->Write();
+  vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New(); // Create the vtkImageData object
+  imageData->SetDimensions(nx, ny, nz);                                           // Set the dimensions of the image data
+  imageData->SetSpacing(dd[0], dd[1], dd[2]);
+  imageData->SetOrigin(posl[0], posl[1], posl[2]); // Set the origin of the image data
+  imageData->AllocateScalars(VTK_FLOAT, 1);
+  // imageData->
+  float *densityArray = static_cast<float *>(imageData->GetScalarPointer()); // Get a pointer to the density field array
+  // Fill the density field array with your data
+  for (int x = 0; x < nx; x++)
+  {
+    for (int y = 0; y < ny; y++)
+    {
+      for (int z = 0; z < nz; z++)
+      {
+        densityArray[(z * ny + y) * nx + x] = data[x][y][z]; // Set the density value at this point
+      }
+    }
+  }
+  vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New(); // Create the vtkXMLImageDataWriter object
+  writer->SetFileName((outpath + filename + "_" + to_string(i) + ".vti").c_str());               // Set the output file name
+  writer->SetCompressorTypeToZLib();                                                             // Enable compression
+  writer->SetCompressionLevel(9);                                                                // Set the level of compression (0-9)
+  writer->SetInputData(imageData);                                                               // Set the input image data
+  writer->Write();                                                                               // Write the output file
 }
-*/
+
 /**
  * This corrects the order of dimensions for view in paraview, as opposed to save_vti which prints the raw data.
  */
@@ -109,23 +71,56 @@ void save_vti_c(string filename, int i,
     cout << "Error: Cannot write file " << filename << " - too many components" << endl;
     return;
   }
+
   int xi = (n_space_divx - 1) / maxcells + 1;
   int yj = (n_space_divy - 1) / maxcells + 1;
   int zk = (n_space_divz - 1) / maxcells + 1;
+  int nx = n_space_div[0] / xi;
+  int ny = n_space_div[1] / yj;
+  int nz = n_space_div[2] / zk;
+  // vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
+  vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New(); // Create the vtkImageData object
+  imageData->SetDimensions(nx, ny, nz);                                           // Set the dimensions of the image data
+  imageData->SetSpacing(dd[0], dd[1], dd[2]);
+  imageData->SetOrigin(posl[0], posl[1], posl[2]); // Set the origin of the image data
+  imageData->AllocateScalars(VTK_FLOAT, ncomponents);
+/*
+  vtkSmartPointer<vtkDoubleArray> timeArray = vtkSmartPointer<vtkDoubleArray>::New();
+  timeArray->SetName("TimeValue");
+  timeArray->SetNumberOfComponents(1);
+  timeArray->SetNumberOfTuples(1);
+  timeArray->SetTuple1(0, t);
 
-  auto *data = new float[min(maxcells, n_space_divz)][min(maxcells, n_space_divy)][min(maxcells, n_space_divx)][3];
-  for (int k = 0; k < maxcells; ++k)
+  */
+  // imageData->GetPointData()->AddArray(data);
+  //vtkSmartPointer<vtkInformation> imageDataInfo = imageData->GetInformation();
+  //imageDataInfo->Set(vtkDataObject::FIELD_NAME(), (filename).c_str());
+    imageData->GetPointData()->SetObjectName("asds");
+  float *data2 = static_cast<float *>(imageData->GetScalarPointer()); // Get a pointer to the density field array
+
+  for (int k = 0; k < nz; ++k)
   {
-    for (int j = 0; j < maxcells; ++j)
+    for (int j = 0; j < ny; ++j)
     {
-      for (int i = 0; i < maxcells; ++i)
+      for (int i = 0; i < nx; ++i)
       {
         for (int c = 0; c < ncomponents; ++c)
-          data[k][j][i][c] = data1[c][k * zk][j * yj][i * xi];
+          //        data[k][j][i][c] = data1[c][k * zk][j * yj][i * xi];
+          data2[(k * ny + j) * nx * 3 + i * 3 + c] = data1[c][k * zk][j * yj][i * xi];
       }
     }
   }
 
+  vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New(); // Create the vtkXMLImageDataWriter object
+  writer->SetFileName((outpath + filename + "_" + to_string(i) + ".vti").c_str());               // Set the output file name                                                                     // Set the time value
+  writer->SetDataModeToBinary();
+  writer->SetCompressorTypeToZLib(); // Enable compression
+  writer->SetCompressionLevel(9);    // Set the level of compression (0-9)
+  writer->SetInputData(imageData);   // Set the input image data
+
+  // writer->SetInputArrayToProcess()
+  writer->Write(); // Write the output file
+  /*
   //  cout <<std::filesystem::temp_directory_path().string()+"/out/"+filename+"_"+to_string(i)+".vti";
   std::ofstream os(outpath + filename + "_" + to_string(i) + ".vti", std::ios::binary | std::ios::out);
   os << "<VTKFile type=\"ImageData\" version=\"1.0\" byte_order=\"LittleEndian\" header_type=\"UInt64\"> \n ";
@@ -159,6 +154,7 @@ void save_vti_c(string filename, int i,
   os << "</VTKFile>";
   os.close();
   delete[] data;
+  */
 }
 
 void save_vti_c2(string filename, int i,

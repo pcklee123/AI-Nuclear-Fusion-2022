@@ -13,6 +13,16 @@
 #include <string>
 #include <filesystem>
 #include <CL/opencl.hpp>
+#include <vtk/vtkSmartPointer.h>
+#include <vtk/vtkFloatArray.h>
+#include <vtk/vtkDoubleArray.h>
+#include <vtk/vtkPolyData.h>
+#include <vtk/vtkInformation.h>
+
+#include <vtk/vtkZLibDataCompressor.h>
+#include <vtk/vtkXMLImageDataWriter.h>
+#include <vtk/vtkImageData.h>
+#include <vtk/vtkPointData.h>
 using namespace std;
 #define trilinon_
 #define Uon_ //whether to calculate the electric (V) potential and potential energy (U). Needs Eon to be enabled.
@@ -26,7 +36,7 @@ using namespace std;
 #define printB //print out B field
 #define printE //print out E field
 //#define FileIn //whether to load from input file (unused)
-//#define RamDisk //whether to use RamDisk
+#define RamDisk //whether to use RamDisk
 #define maxcells 32
 #define cldevice 1
 
