@@ -44,8 +44,8 @@ using namespace std;
 
 #define Temp_e 1e5 //in Kelvin
 #define Temp_d 1e5 //in Kelvin
-#define Hist_n 1e2
-#define Hist_max 1e3 //in eV Kelvin to eV is divide by 11600
+#define Hist_n 1000
+#define Hist_max 100 //in eV Kelvin to eV is divide by 11600
 //save file info - initialize filepath
 #ifdef RamDisk
 
@@ -58,7 +58,7 @@ const string outpath = std::filesystem::temp_directory_path().string() + "out/";
 #endif
 
 // technical parameters
-constexpr int n_space = 128;                             // must be 2 to power of n
+constexpr int n_space = 64;                             // must be 2 to power of n
 constexpr int n_partd = n_space * n_space * n_space * 8; // must be 2 to power of n
 constexpr int n_parte = n_partd;
 constexpr unsigned int ncoeff = 8;
@@ -187,4 +187,6 @@ void generateParticles(float a0, float r0, int *qs, int *mp, float pos0x[2][n_pa
                         float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd], int q[2][n_partd], int m[2][n_partd], int *nt);
 void generateField(float Ee[3][n_space_divz][n_space_divy][n_space_divx], float Be[3][n_space_divz][n_space_divy][n_space_divx]);
 void id_to_cell(int id, int *x, int *y, int *z);
+void save_hist(double t, int npart, int mp[2], float dt[2], float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd]);
+
 #endif // TRAJ_H_INCLUDED
