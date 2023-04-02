@@ -28,6 +28,17 @@ void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd
 #endif
 }
 
+void save_hist(int i_time, int npart, float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd])
+{
+
+  for (int i = 0; i < npart; ++i)
+  {
+    int index = trunc((0.5 * mp[p] * (dx * dx + dy * dy + dz * dz) / (e_charge_mass * dt[p] * dt[p] * Hist_n)) / Hist_max);
+    KEhist[p][index]++;
+  } 
+   for (int i = 0; i < Hist_n; ++i)  {cout<<KEhist[p][i];} 
+}
+
 /**
  * This corrects the order of dimensions for view in paraview, as opposed to save_vti which prints the raw data.
  */
@@ -71,6 +82,7 @@ void save_vti_c(string filename, int i,
   vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New(); // Create the vtkXMLImageDataWriter object
   writer->SetFileName((outpath + filename + "_" + to_string(i) + ".vti").c_str());               // Set the output file name                                                                     // Set the time value
   writer->SetDataModeToBinary();
+  // writer->SetCompressorTypeToLZ4();
   writer->SetCompressorTypeToZLib(); // Enable compression
   writer->SetCompressionLevel(9);    // Set the level of compression (0-9)
   writer->SetInputData(imageData);   // Set the input image data

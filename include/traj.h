@@ -42,6 +42,10 @@ using namespace std;
 #define maxcells 32
 #define cldevice 1
 
+#define Temp_e 1e5 //in Kelvin
+#define Temp_d 1e5 //in Kelvin
+#define Hist_n 1e2
+#define Hist_max 1e3 //in eV Kelvin to eV is divide by 11600
 //save file info - initialize filepath
 #ifdef RamDisk
 
@@ -54,7 +58,7 @@ const string outpath = std::filesystem::temp_directory_path().string() + "out/";
 #endif
 
 // technical parameters
-constexpr int n_space = 64;                             // must be 2 to power of n
+constexpr int n_space = 128;                             // must be 2 to power of n
 constexpr int n_partd = n_space * n_space * n_space * 8; // must be 2 to power of n
 constexpr int n_parte = n_partd;
 constexpr unsigned int ncoeff = 8;

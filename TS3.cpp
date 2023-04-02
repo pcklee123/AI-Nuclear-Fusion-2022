@@ -130,7 +130,7 @@ int main()
     int mp[2] = {1, 1835 * 2};
     // float mp[2]= {9.10938356e-31,3.3435837724e-27}; //kg
     int qs[2] = {-1, 1};        // Sign of charge
-    float Temp[2] = {1e5, 1e5}; // in K convert to eV divide by 1.160451812e4
+    float Temp[2] = {Temp_e, Temp_d}; // in K convert to eV divide by 1.160451812e4
 
     // initial bulk electron, ion velocity
     float v0[2][3] = {{0, 0, 0/*1e6*/}, {0, 0, 0}};
