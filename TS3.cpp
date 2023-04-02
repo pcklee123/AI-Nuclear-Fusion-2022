@@ -115,11 +115,7 @@ int main()
     float U[2] = {0, 0};
 
     ofstream E_file, B_file;
-    ofstream Histe_file, Histd_file;
-    Histe_file.open("Histe.csv");
-    Histd_file.open("Histd.csv");
-    Histe_file.close();
-    Histd_file.close();
+
     log_headers();
 
     cout << std::scientific;

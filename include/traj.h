@@ -44,7 +44,7 @@ using namespace std;
 
 #define Temp_e 1e5 //in Kelvin
 #define Temp_d 1e5 //in Kelvin
-#define Hist_n 1000
+#define Hist_n 128
 #define Hist_max 100 //in eV Kelvin to eV is divide by 11600
 //save file info - initialize filepath
 #ifdef RamDisk
