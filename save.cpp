@@ -35,23 +35,25 @@ void save_hist(double t, int npart, int mp[2], float dt[2], float pos0x[2][n_par
   static int first = 1;
   if (first)
   {
-    Histe_file.open("Histe.csv");
-    Histd_file.open("Histd.csv");
+    Histe_file.open(outpath + "Histe.csv");
+    Histd_file.open(outpath + "Histd.csv");
     Histe_file << "t";
     Histd_file << "t";
     for (int i = 0; i < Hist_n; ++i)
     {
-      Histe_file << ",Ee" << i;
-      Histd_file << ",Ed" << i;
+      // Histe_file << ",Ee" << i;
+      // Histd_file << ",Ed" << i;
+      Histe_file << "," << i;
+      Histd_file << "," << i;
     }
     Histe_file << endl;
     Histd_file << endl;
     Histe_file.close();
     Histd_file.close();
-    first=0;
+    first = 0;
   }
-  Histe_file.open(outpath +"Histe.csv", std::ios_base::app);
-  Histd_file.open(outpath +"Histd.csv", std::ios_base::app);
+  Histe_file.open(outpath + "Histe.csv", std::ios_base::app);
+  Histd_file.open(outpath + "Histd.csv", std::ios_base::app);
   Histe_file << t;
   Histd_file << t;
 

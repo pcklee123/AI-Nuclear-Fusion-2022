@@ -305,6 +305,7 @@ int main()
 
     for (i_time = 1; i_time < ndatapoints; i_time++)
     {
+        save_hist(t, n_partd, mp, dt, pos0x, pos0y, pos0z, pos1x, pos1y, pos1z);
         for (int ntime = 0; ntime < nc; ntime++)
         {
             /*
@@ -366,7 +367,6 @@ int main()
             get_densityfields(currentj, np, npt, nt, KEtot, posL, posH, dd, pos1x, pos1y, pos1z, pos0x, pos0y, pos0z, q, dt, mp, n_part, jc);
             cout << "density: " << timer.elapsed() << "s, ";
 
-            save_hist(t, n_partd, mp, dt, pos0x, pos0y, pos0z, pos1x, pos1y, pos1z);
             // find E field must work out every i,j,k depends on charge in every other cell
             timer.mark();
             // set externally applied fields this is inside time loop so we can set time varying E and B field
