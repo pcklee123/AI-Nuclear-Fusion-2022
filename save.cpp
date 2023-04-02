@@ -24,19 +24,41 @@ void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd
   // save_vtp("d", i_time, n_output_part, 1, t, (reinterpret_cast<const char *>(&KE[1][0])), (reinterpret_cast<const char *>(&posp[1][0][0])));
   save_vtp("e", i_time, n_output_part, 0, t, KE, posp);
   save_vtp("d", i_time, n_output_part, 1, t, KE, posp);
-
 #endif
 }
 
-void save_hist(int i_time, int npart, float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd])
+void save_hist(double t, int npart, int mp[2], float dt[2], float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd])
 {
-
-  for (int i = 0; i < npart; ++i)
+  ofstream Histe_file, Histd_file;
+  Histe_file.open("Histe.csv", std::ios_base::app);
+  Histd_file.open("Histd.csv", std::ios_base::app);
+  Histe_file << t;
+  Histd_file << t;
+  float KEhist[2][Hist_n];
+  memset(KEhist, 0, sizeof(KEhist));
+  for (int p = 0; p < 2; ++p)
+    for (int i = 0; i < npart; ++i)
+    {
+      float dx = pos1x[p][n_partd] - pos0x[p][n_partd];
+      float dy = pos1z[p][n_partd] - pos0y[p][n_partd];
+      float dz = pos1z[p][n_partd] - pos0z[p][n_partd];
+     // cout((0.5 * (float)mp[p] * (dx * dx + dy * dy + dz * dz) / (e_charge_mass * dt[p] * dt[p] * (float)Hist_n)) / Hist_max);
+      int index = trunc((0.5 * (float)mp[p] * (dx * dx + dy * dy + dz * dz) / (e_charge_mass * dt[p] * dt[p] * (float)Hist_n)) / Hist_max);
+      if (index > Hist_n)
+        index = Hist_n - 1;
+      if (index < 0)
+        cout << "error index<0" << endl;
+      KEhist[p][index]++;
+    }
+  for (int i = 0; i < Hist_n; ++i)
   {
-    int index = trunc((0.5 * mp[p] * (dx * dx + dy * dy + dz * dz) / (e_charge_mass * dt[p] * dt[p] * Hist_n)) / Hist_max);
-    KEhist[p][index]++;
-  } 
-   for (int i = 0; i < Hist_n; ++i)  {cout<<KEhist[p][i];} 
+    Histe_file << "," << KEhist[0][i];
+    Histd_file << "," << KEhist[1][i];
+  }
+  Histe_file << endl;
+  Histd_file << endl;
+  Histe_file.close();
+  Histd_file.close();
 }
 
 /**
