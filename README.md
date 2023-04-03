@@ -6,8 +6,8 @@
 3. [Todo](#Todo)
 
 ## Introduction
-This project aims to simulate Magnetized Liner Inertial Fusion (MagLIF). [Specifically, it simulates charged particles and their trajectories in B and E fields.]
-
+This project aims to develop a Particle in Cell plasma code.
+Original code in 2021 by Hilary,Yin Yue and Chloe, extensive improvements by Samuel,Ananth and Vishwa.
 
 ## Getting Started
 ### Prerequisites
