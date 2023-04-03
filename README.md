@@ -37,8 +37,7 @@ Original code in 2021 by Hilary,Yin Yue and Chloe, extensive improvements by Sam
     - F=q(E+vxB)+rv w
     - here r is negative when there is energy loss and positive when there is energy gain
 
-- to get more performance, you might want to recompile the libraries used 
-    for example to install fftw3 recompiled with OMP enabled:
+- to get more performance, you might want to recompile the libraries used. for example to install fftw3 recompiled with OMP enabled:
 > wget https://www.fftw.org/fftw-3.3.10.tar.gz
 > tar xvzf fftw-3.3.10.tar.gz
 > cd fftw-3.3.10/
