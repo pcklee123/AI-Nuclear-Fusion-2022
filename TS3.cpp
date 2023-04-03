@@ -137,8 +137,7 @@ int main()
     // initial bulk electron, ion velocity
     float v0[2][3] = {{0, 0, 0 /*1e6*/}, {0, 0, 0}};
 
-    // typical dimensions of a cell
-    float a0 = 2e-3;
+    
 
     float r0 = (n_space / 8) * a0; // if sphere this is the radius
     float area = 4 * pi * r0 * r0;

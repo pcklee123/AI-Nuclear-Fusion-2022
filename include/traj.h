@@ -33,9 +33,8 @@ using namespace std;
 extern cl::Context context_g;
 extern cl::Device default_device_g;
 extern cl::Program program_g;
-//save file info - initialize filepath
-#ifdef RamDisk
 
+#ifdef RamDisk // save file info - initialize filepath
 const string outpath = "R:\\Temp\\out\\";
 #elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 /* UNIX-style OS. ------------------------------------------- */
@@ -44,30 +43,35 @@ const string outpath = std::filesystem::temp_directory_path().string() + "/out/"
 const string outpath = std::filesystem::temp_directory_path().string() + "out/";
 #endif
 
+class Time
+{
+private:
+        vector<chrono::_V2::system_clock::time_point> marks;
 
-class Time {
-        private:
-                vector<chrono::_V2::system_clock::time_point> marks;
-        public:
-                void mark();
-                float elapsed();
-                float replace();
-
+public:
+        void mark();
+        float elapsed();
+        float replace();
 };
-class Log {
-        private:
-                ofstream log_file;
-                bool firstEntry = true; // Whether the next item to print is the first item in the line
-        public:
-                Log();
-                template<class T> void write(T text, bool flush = false){
-                        if(!firstEntry) log_file << ",";
-                        firstEntry = false;
-                        log_file << text;
-                        if(flush) log_file.flush();
-                }
-                void newline();
-                void close();
+class Log
+{
+private:
+        ofstream log_file;
+        bool firstEntry = true; // Whether the next item to print is the first item in the line
+public:
+        Log();
+        template <class T>
+        void write(T text, bool flush = false)
+        {
+                if (!firstEntry)
+                        log_file << ",";
+                firstEntry = false;
+                log_file << text;
+                if (flush)
+                        log_file.flush();
+        }
+        void newline();
+        void close();
 };
 static Time timer;
 static Log logger;
@@ -77,9 +81,9 @@ void save_vti_c2(string filename, int i,
 void save_vti_c(string filename, int i,
                 unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t,
                 float data1[][n_space_divz][n_space_divy][n_space_divz], string typeofdata, int bytesperdata);
-//void save_vti(string filename, int i, unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t, float data[n_space_divz][n_space_divy][n_space_divz], string typeofdata, int sizeofdata);
+// void save_vti(string filename, int i, unsigned int n_space_div[3], float posl[3], float dd[3], uint64_t num, int ncomponents, double t, float data[n_space_divz][n_space_divy][n_space_divz], string typeofdata, int sizeofdata);
 void save_pvd(string filename, int ndatapoints);
-//void save_vtp(string filename, int i, uint64_t num, int ncomponents, double t, const char *data, const char *points);
+// void save_vtp(string filename, int i, uint64_t num, int ncomponents, double t, const char *data, const char *points);
 void save_vtp(string filename, int i, uint64_t num, int ncomponents, double t, float data[2][n_output_part], float points[2][n_output_part][3]);
 void set_initial_pos_vel(int n_part_types, int n_particles, float *pos0, float *pos1, float *sigma, int *q, int *m, int *nt);
 void cl_start();
@@ -87,14 +91,13 @@ void cl_set_build_options(float posL[3], float posH[3], float dd[3]);
 
 void tnp(float *Ea1, float *Ba1, float *pos0x, float *pos0y, float *pos0z, float *pos1x, float *pos1y, float *pos1z,
          float cf[2],
-         unsigned int ci[2]
-        );
-//void get_precalc_r3(float precalc_r3[3][n_space_divz2][n_space_divy2][n_space_divx2], float dd[3]);
+         unsigned int ci[2]);
+// void get_precalc_r3(float precalc_r3[3][n_space_divz2][n_space_divy2][n_space_divx2], float dd[3]);
 int calcEBV(float V[n_space_divz][n_space_divy][n_space_divx],
-           float E[3][n_space_divz][n_space_divy][n_space_divx], float B[3][n_space_divz][n_space_divy][n_space_divx],
-           float Ee[3][n_space_divz][n_space_divy][n_space_divx], float Be[3][n_space_divz][n_space_divy][n_space_divx],
-           float npt[n_space_divz][n_space_divy][n_space_divx], float jc[3][n_space_divz][n_space_divy][n_space_divx],
-           float dd[3], float Emax, float Bmax);
+            float E[3][n_space_divz][n_space_divy][n_space_divx], float B[3][n_space_divz][n_space_divy][n_space_divx],
+            float Ee[3][n_space_divz][n_space_divy][n_space_divx], float Be[3][n_space_divz][n_space_divy][n_space_divx],
+            float npt[n_space_divz][n_space_divy][n_space_divx], float jc[3][n_space_divz][n_space_divy][n_space_divx],
+            float dd[3], float Emax, float Bmax);
 
 void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd[3], double t,
                 float np[2][n_space_divz][n_space_divy][n_space_divx], float currentj[2][3][n_space_divz][n_space_divy][n_space_divx],
@@ -122,14 +125,14 @@ void calc_trilin_constants(float E[3][n_space_divz][n_space_divy][n_space_divx],
 void changedt(float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd], int n_part[3]);
 
 void calcU(float V[n_space_divz][n_space_divy][n_space_divx],
-                float E[3][n_space_divz][n_space_divy][n_space_divx], float B[3][n_space_divz][n_space_divy][n_space_divx],
-                float posx[2][n_partd], float posy[2][n_partd], float posz[2][n_partd],
-                float posL[3], float dd[3], int n_part[2], int q[2][n_partd], float out[2]);
+           float E[3][n_space_divz][n_space_divy][n_space_divx], float B[3][n_space_divz][n_space_divy][n_space_divx],
+           float posx[2][n_partd], float posy[2][n_partd], float posz[2][n_partd],
+           float posL[3], float dd[3], int n_part[2], int q[2][n_partd], float out[2]);
 
 void generateParticles(float a0, float r0, int *qs, int *mp, float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd],
-                        float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd], int q[2][n_partd], int m[2][n_partd], int *nt);
+                       float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd], int q[2][n_partd], int m[2][n_partd], int *nt);
 void generateField(float Ee[3][n_space_divz][n_space_divy][n_space_divx], float Be[3][n_space_divz][n_space_divy][n_space_divx]);
 void id_to_cell(int id, int *x, int *y, int *z);
-void save_hist(int i_time,double t, int npart, int mp[2], float dt[2], float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd]);
+void save_hist(int i_time, double t, int npart, int mp[2], float dt[2], float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd]);
 
 #endif // TRAJ_H_INCLUDED

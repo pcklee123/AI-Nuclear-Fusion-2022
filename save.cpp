@@ -54,7 +54,7 @@ void save_hist(int i_time, double t, int npart, int mp[2], float dt[2], float po
   // Add the histogram values to the arrays
   for (int i = 0; i < Hist_n; ++i)
   {
-    energyArray->InsertNextValue((double)(i * Hist_max) / (double)(Hist_n));
+    energyArray->InsertNextValue(((double)(i+0.5) * (double)Hist_max) / (double)(Hist_n));
     electronHistArray->InsertNextValue(KEhist[0][i] + 1);
     ionHistArray->InsertNextValue(KEhist[1][i] + 1);
   }
