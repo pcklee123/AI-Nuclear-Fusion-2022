@@ -1,5 +1,6 @@
 #ifndef TRAJ_H_INCLUDED
 #define TRAJ_H_INCLUDED
+#include "traj_physics.h"
 #define CL_HPP_TARGET_OPENCL_VERSION 300
 #include <iostream>
 #include <fstream>
@@ -19,6 +20,9 @@
 #include <vtk/vtkDoubleArray.h>
 #include <vtk/vtkPolyData.h>
 #include <vtk/vtkInformation.h>
+#include <vtk/vtkTable.h>
+
+#include <vtk/vtkDelimitedTextWriter.h>
 
 #include <vtk/vtkZLibDataCompressor.h>
 #include <vtk/vtkXMLImageDataWriter.h>
@@ -26,26 +30,9 @@
 #include <vtk/vtkImageData.h>
 #include <vtk/vtkPointData.h>
 using namespace std;
-#define trilinon_
-#define Uon_ //whether to calculate the electric (V) potential and potential energy (U). Needs Eon to be enabled.
-#define Eon_ //whether to calculate the electric (E) field
-#define Bon_ //whether to calculate the magnetic (B) field
-#define EFon_ //whether to apply electric force
-#define BFon_ //whether to apply magnetic force
-#define printDensity
-#define printParticles
-//#define printV //print out V
-#define printB //print out B field
-#define printE //print out E field
-//#define FileIn //whether to load from input file (unused)
-#define RamDisk //whether to use RamDisk
-#define maxcells 32
-#define cldevice 1
-
-#define Temp_e 1e5 //in Kelvin
-#define Temp_d 1e5 //in Kelvin
-#define Hist_n 128
-#define Hist_max 100000 //in eV Kelvin to eV is divide by 11600
+extern cl::Context context_g;
+extern cl::Device default_device_g;
+extern cl::Program program_g;
 //save file info - initialize filepath
 #ifdef RamDisk
 
@@ -57,50 +44,6 @@ const string outpath = std::filesystem::temp_directory_path().string() + "/out/"
 const string outpath = std::filesystem::temp_directory_path().string() + "out/";
 #endif
 
-// technical parameters
-constexpr int n_space = 64;                             // must be 2 to power of n
-constexpr int n_partd = n_space * n_space * n_space * 8; // must be 2 to power of n
-constexpr int n_parte = n_partd;
-constexpr unsigned int ncoeff = 8;
-extern cl::Context context_g;
-extern cl::Device default_device_g;
-extern cl::Program program_g;
-constexpr int n_output_part = min(n_partd, 8192); // maximum number of particles to output to file
-// const int nprtd=floor(n_partd/n_output_part);
-
-constexpr int ndatapoints = 300; // total number of time steps to calculate
-constexpr int nc = 10;          // number of times to calculate E and B between printouts
-constexpr int md_me = 60;       // ratio of electron speed/deuteron speed at the same KE. Used to calculate electron motion more often than deuteron motion
-constexpr int ncalc0[2] = {md_me, 1};
-constexpr int nthreads = 8; // match with your CPU
-
-// The maximum expected E and B fields. If fields go beyond this, the the time step, cell size etc will be wrong. Should adjust and recalculate.
-//  maximum expected magnetic field
-constexpr float Bmax0 = 1;
-constexpr float Emax0 = 1e6;
-
-constexpr float target_part = 1e10;
-constexpr float r_part_spart = target_part / n_partd;//1e12 / n_partd; // ratio of particles per tracked "super" particle
-//ie. the field of N particles will be multiplied by (1e12/N), as if there were 1e12 particles
-
-constexpr int n_space_divx = n_space;
-constexpr int n_space_divy = n_space;
-constexpr int n_space_divz = n_space;
-constexpr int n_space_divx2 = n_space_divx * 2;
-constexpr int n_space_divy2 = n_space_divy * 2;
-constexpr int n_space_divz2 = n_space_divz * 2;
-constexpr int n_cells = n_space_divx * n_space_divy * n_space_divz;
-constexpr int n_cells8 = n_cells * 8;
-// physical "constants"
-constexpr float kb = 1.38064852e-23;       // m^2kss^-2K-1
-constexpr float e_charge = 1.60217662e-19; // C
-constexpr float ev_to_j = e_charge;
-constexpr float e_mass = 9.10938356e-31;
-constexpr float e_charge_mass = e_charge / e_mass;
-constexpr float kc = 8.9875517923e9;         // kg m3 s-2 C-2
-constexpr float epsilon0 = 8.8541878128e-12; // F m-1
-constexpr float pi = 3.1415926536;
-constexpr float u0 = 4e-7 * pi;
 
 class Time {
         private:
@@ -187,6 +130,6 @@ void generateParticles(float a0, float r0, int *qs, int *mp, float pos0x[2][n_pa
                         float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd], int q[2][n_partd], int m[2][n_partd], int *nt);
 void generateField(float Ee[3][n_space_divz][n_space_divy][n_space_divx], float Be[3][n_space_divz][n_space_divy][n_space_divx]);
 void id_to_cell(int id, int *x, int *y, int *z);
-void save_hist(double t, int npart, int mp[2], float dt[2], float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd]);
+void save_hist(int i_time,double t, int npart, int mp[2], float dt[2], float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd]);
 
 #endif // TRAJ_H_INCLUDED

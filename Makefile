@@ -1,4 +1,4 @@
-_DEPS = traj.h
+_DEPS = traj.h traj_physics.h
 _OBJ = utils.o TS3.o tnp.o generate.o sel_part_print.o save.o get_densityfields.o cl_code.o changedt.o calcEBV_FFT.o calcU.o calc_trilin_constants.o
 
 IDIR = include
@@ -13,7 +13,7 @@ CFLAGS= -I$(IDIR) -I /ucrt64/include/vtk -L /ucrt64/lib/vtk -fopenmp -fopenmp-si
 
 #LIBS= -lm -lgsl -lOpenCL.dll -lfftw3f -lomp.dll -lfftw3f_omp
 LIBS= -lm -lgsl -lOpenCL.dll  -lgomp.dll -lfftw3f_omp -lfftw3f  
-LIBS+=-lvtkCommonCore.dll  -lvtksys.dll -lvtkIOXML.dll -lvtkCommonDataModel.dll
+LIBS+=-lvtkCommonCore.dll  -lvtksys.dll -lvtkIOXML.dll -lvtkCommonDataModel.dll -lvtkIOCore.dll
 #-lvtkIOLegacy.dll -lvtkCommonComputationalGeometry.dll -lvtkCommonSystem.dll
 #-lvtkGraphics.dll -lvtkFiltersGeneral.dll -lvtkImagingCore.dll -lvtkFiltersGeneric.dll -lvtkIOCore.dll -lvtkIOImage.dll 
 AFLAGS= -flto -funroll-loops -fno-signed-zeros -fno-trapping-math -D_GLIBCXX_PARALLEL -fgcse-sm -fgcse-las

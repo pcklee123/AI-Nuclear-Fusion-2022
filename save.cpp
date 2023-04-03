@@ -26,7 +26,62 @@ void save_files(int i_time, unsigned int n_space_div[3], float posL[3], float dd
   save_vtp("d", i_time, n_output_part, 1, t, KE, posp);
 #endif
 }
+void save_hist(int i, double t, int npart, int mp[2], float dt[2], float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd])
+{
+  // Create the vtkTable object
+  vtkSmartPointer<vtkTable> table = vtkSmartPointer<vtkTable>::New();
+  table->SetNumberOfRows(Hist_n);
+  // Create the time array
+  // vtkSmartPointer<vtkDoubleArray> timeArray = vtkSmartPointer<vtkDoubleArray>::New();
+  // timeArray->SetName("Time");
+  // timeArray->InsertNextValue(t);
+  // table->AddColumn(timeArray);
 
+  // Create the histogram arrays
+  vtkSmartPointer<vtkDoubleArray> energyArray = vtkSmartPointer<vtkDoubleArray>::New();
+  energyArray->SetName("Energy(eV)");
+  vtkSmartPointer<vtkDoubleArray> electronHistArray = vtkSmartPointer<vtkDoubleArray>::New();
+  electronHistArray->SetName("Electron KE Histogram");
+  vtkSmartPointer<vtkDoubleArray> ionHistArray = vtkSmartPointer<vtkDoubleArray>::New();
+  ionHistArray->SetName("Ion KE Histogram");
+
+  double KEhist[2][Hist_n];
+  memset(KEhist, 0, sizeof(KEhist));
+  for (int p = 0; p < 2; ++p)
+    for (int i = 0; i < npart; ++i)
+    {
+      float dx = pos1x[p][i] - pos0x[p][i];
+      float dy = pos1z[p][i] - pos0y[p][i];
+      float dz = pos1z[p][i] - pos0z[p][i];
+      int index = (int)trunc((0.5 * (float)mp[p] * (dx * dx + dy * dy + dz * dz) / (e_charge_mass * dt[p] * dt[p] * (float)Hist_n)) /(float) Hist_max);
+      if (index > Hist_n)
+        index = Hist_n - 1;
+      if (index < 0)
+        cout << "error index<0" << endl;
+      KEhist[p][index]++;
+    }
+
+  // Add the histogram values to the arrays
+  for (int i = 0; i < Hist_n; ++i)
+  {
+    energyArray->InsertNextValue((double)(i * Hist_max) / (double)(Hist_n));
+    electronHistArray->InsertNextValue(KEhist[0][i] + 1);
+    ionHistArray->InsertNextValue(KEhist[1][i] + 1);
+  }
+
+  // Add the histogram arrays to the table
+  table->AddColumn(energyArray);
+  table->AddColumn(electronHistArray);
+  table->AddColumn(ionHistArray);
+
+  // Write the table to a file
+  vtkSmartPointer<vtkDelimitedTextWriter> writer = vtkSmartPointer<vtkDelimitedTextWriter>::New();
+  writer->SetFileName((outpath + "KEhist_" + to_string(i) + ".csv").c_str());
+  writer->SetInputData(table);
+  writer->Write();
+}
+
+/*
 void save_hist(double t, int npart, int mp[2], float dt[2], float pos0x[2][n_partd], float pos0y[2][n_partd], float pos0z[2][n_partd], float pos1x[2][n_partd], float pos1y[2][n_partd], float pos1z[2][n_partd])
 {
   ofstream Histe_file, Histd_file;
@@ -80,7 +135,7 @@ void save_hist(double t, int npart, int mp[2], float dt[2], float pos0x[2][n_par
   Histe_file.close();
   Histd_file.close();
 }
-
+*/
 /**
  * This corrects the order of dimensions for view in paraview, as opposed to save_vti which prints the raw data.
  */
