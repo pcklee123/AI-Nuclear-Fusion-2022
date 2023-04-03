@@ -6,15 +6,7 @@
 
 ## Introduction
 This project aims to simulate Magnetized Liner Inertial Fusion (MagLIF). [Specifically, it simulates charged particles and their trajectories in B and E fields.]
-Todo
-- Setup particles for MagLIF
-    - Two sets of plasmas
-        - 1. Low density plasma cylinder
-        - 2. High density thin cylindrical shell around plasma cylinder.
-- Setup external fields. 
-    - Electric field along the cylinder.
-- add in "artificial viscosity" to simulate energy loss/gain
-    F=q(E+vxB)+rv where r is negative when there is energy loss and positive when there is energy gain
+
 
 ## Getting Started
 ### Prerequisites
@@ -39,3 +31,14 @@ for example to install fftw3 recompiled with OMP enabled:
 > make install
 
 ## Usage
+
+##
+Todo
+- Setup particles for MagLIF
+    - Two sets of plasmas
+        - 1. Low density plasma cylinder
+        - 2. High density thin cylindrical shell around plasma cylinder.
+- Setup external fields. 
+    - Electric field along the cylinder.
+- add in "artificial viscosity" to simulate energy loss/gain
+    F=q(E+vxB)+rv where r is negative when there is energy loss and positive when there is energy gain
