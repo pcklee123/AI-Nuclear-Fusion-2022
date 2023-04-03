@@ -5,42 +5,37 @@
 3. [Usage](#usage)
 
 ## Introduction
-This project simulates Magnetized Liner Inertial Fusion (MagLIF). [Specifically, it simulates charged particles and their trajectories in β and e fields.]?
+This project aims to simulate Magnetized Liner Inertial Fusion (MagLIF). [Specifically, it simulates charged particles and their trajectories in B and E fields.]
+Todo
 - Setup particles for MagLIF
     - Two sets of plasmas
         - 1. Low density plasma cylinder
         - 2. High density thin cylindrical shell around plasma cylinder.
 - Setup external fields. 
     - Electric field along the cylinder.
-
+- add in "artificial viscosity" to simulate energy loss/gain
+    F=q(E+vxB)+rv where r is negative when there is energy loss and positive when there is energy gain
 
 ## Getting Started
 ### Prerequisites
 - MSYS2
+- to avoid confusion, use either of "mingw64" or "ucrt" and do not mix the two. The following examples make use pf ucrt  
 - Tools 
     pacman -S base-devel cmake git mingw-w64-ucrt-x86_64-gcc paraview  
-- Libs 
+- Libs (Opencl, OpenMP, gsl, fftw, vtk)
     pacman -S mingw-w64-ucrt-x86_64-opencl-headers mingw-w64-ucrt-x86_64-opencl-clhpp mingw-w64-ucrt-x86_64-opencl-icd mingw-w64-ucrt-x86_64-openmp mingw-w64-ucrt-x86_64-gsl mingw-w64-ucrt-x86_64-fftw mingw-w64-ucrt-x86_64-vtk 
 
 - GCC added to PATH in MSYS
-    - In the root directory, run `export PATH=$PATH:/mingw64/bin`
-    - this can also be added in windows "edit system environment variables" , "Path". Add C:\msys64\usr\bin and C:\msys64\....\bin
+    - In the root directory, run `export PATH=$PATH:/ucrt64/bin`
+    - this can also be added in windows "edit system environment variables" , "Path". Add C:\msys64\usr\bin and C:\msys64\ucrt64\bin
 
-To install fftw3 recompiled with OMP enabled:
-```
+to get more performance, you might want to recompile the libraries used 
+for example to install fftw3 recompiled with OMP enabled:
 > wget https://www.fftw.org/fftw-3.3.10.tar.gz
 > tar xvzf fftw-3.3.10.tar.gz
 > cd fftw-3.3.10/
 > ./configure --enable-threads --enable-openmp --enable-avx --enable-avx2 --enable-avx512 --enable-avx-128-fma --enable-float --with-our-malloc --enable-sse2
 > make
 > make install
-```
 
-To connect fftw3.h to VSCode, add the path of where fftw3.h is installed (fftw-3.3.10/api)
-
-Add before fftw plans (what does this mean??)
-
-`LIBS= -lm -lgsl -lOpenCL.dll -lomp.dll -lfftw3f -lfftw3f_omp`
-- Required Libraries
-    - GSL
 ## Usage
