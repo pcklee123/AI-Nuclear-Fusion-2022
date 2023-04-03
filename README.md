@@ -3,6 +3,7 @@
 1. [Introduction](#introduction)
 2. [Getting Started](#getting-started)
 3. [Usage](#usage)
+3. [Todo](#Todo)
 
 ## Introduction
 This project aims to simulate Magnetized Liner Inertial Fusion (MagLIF). [Specifically, it simulates charged particles and their trajectories in B and E fields.]
@@ -32,8 +33,7 @@ for example to install fftw3 recompiled with OMP enabled:
 
 ## Usage
 
-##
-Todo
+## Todo
 - Setup particles for MagLIF
     - Two sets of plasmas
         - 1. Low density plasma cylinder
