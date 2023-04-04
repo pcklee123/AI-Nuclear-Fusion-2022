@@ -40,9 +40,9 @@ Original code in 2021 by Hilary,Yin Yue and Chloe, extensive improvements by Sam
     - here viscosity r is negative when there is energy loss and positive when there is energy gain
 - add temperature field Te[x][y][z]
     - approximate Te as average KE of particles
-- viscosity_field[p][x][y][z]
+- viscosity_field[p][x][y][z] 
     - P=Fv=r*v*v, So r=P_perparticle/(v*v)
-    - Bremstrahlung radiation loss from NRL Plasma formulary
+    - Bremstrahlung radiation loss from NRL Plasma formulary, https://tanimislam.github.io/research/NRL_Formulary_2019.pdf
      - Pbr=1.69e-32*Ne*pow(Te,0.5)Sum(pow(Z,2)*Ni(Z)) in Watts per cm^3
     - cyclotron radiation loss from NRL Plasma formulary
      - Pc=6.21-28*B^2*Ne*Te in Watts per cm^3
