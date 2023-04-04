@@ -27,15 +27,33 @@ Original code in 2021 by Hilary,Yin Yue and Chloe, extensive improvements by Sam
 ## Usage
 
 ## Todo
-- Setup particles for MagLIF
-    - Two sets of plasmas
+-Setup particles for hot rod project
+-Setup particles for hot plate project 
+-Setup particles for MagLIF
+    - Two sets of plasmas similar to hot rod project
         - 1. Low density plasma cylinder
         - 2. High density thin cylindrical shell around plasma cylinder.
-- Setup external fields. 
-    - Electric field along the cylinder.
+    - Setup external fields. 
+        - Electric field along the cylinder.
 - add in "artificial viscosity" to simulate energy loss/gain
     - F=q(E+vxB)+rv w
-    - here r is negative when there is energy loss and positive when there is energy gain
+    - here viscosity r is negative when there is energy loss and positive when there is energy gain
+- add temperature field Te[x][y][z]
+    - approximate Te as average KE of particles
+- viscosity_field[p][x][y][z]
+    - P=Fv=r*v*v, So r=P_perparticle/(v*v)
+    - Bremstrahlung radiation loss from NRL Plasma formulary
+     - Pbr=1.69e-32*Ne*pow(Te,0.5)Sum(pow(Z,2)*Ni(Z)) in Watts per cm^3
+    - cyclotron radiation loss from NRL Plasma formulary
+     - Pc=6.21-28*B^2*Ne*Te in Watts per cm^3
+    - power density from fusion from NRL Plasma formulary (Assume to be absorbed within the cell for the time being not realistic as fusion products may have very long range. if cell sizes are small, most of energy from fusion products will be lost from the cell) all in in Watts per cm^3
+     - P_DD=3.3e-13*N_D^2*sigma_v_dd
+     - P_DT=5.6e-13*N_D*N_T*sigma_v_DT
+     - P_DHe3=2.9e-12*N_D*N_He3*sigma_v_DHe3
+    - power transfer between electrons and ion
+
+
+
 
 - to get more performance, you might want to recompile the libraries used. for example to install fftw3 recompiled with OMP enabled:
  > wget https://www.fftw.org/fftw-3.3.10.tar.gz
