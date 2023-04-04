@@ -41,15 +41,15 @@ Original code in 2021 by Hilary,Yin Yue and Chloe, extensive improvements by Sam
 - add temperature field Te[x][y][z]
     - approximate Te as average KE of particles
 - viscosity_field[p][x][y][z] 
-    - P=F*v=r*v*v, So r=P_perparticle/(v*v)
+    - P=F*v=r * v * v, So r=P_perparticle/(v*v)
     - Bremstrahlung radiation loss from NRL Plasma formulary, https://tanimislam.github.io/research/NRL_Formulary_2019.pdf
      - Pbr=1.69e-32*Ne*pow(Te,0.5)Sum(pow(Z,2)*Ni(Z)) in Watts per cm^3
     - cyclotron radiation loss from NRL Plasma formulary
-     - Pc=6.21-28*B*B*Ne*Te in Watts per cm^3
+     - Pc=6.21-28 * B * B * Ne * Te in Watts per cm^3
     - power density from fusion from NRL Plasma formulary (Assume to be absorbed within the cell for the time being not realistic as fusion products may have very long range. if cell sizes are small, most of energy from fusion products will be lost from the cell) all in in Watts per cm^3
-     - P_DD=3.3e-13*N_D*N_D*sigma_v_dd
-     - P_DT=5.6e-13*N_D*N_T*sigma_v_DT
-     - P_DHe3=2.9e-12*N_D*N_He3*sigma_v_DHe3
+     - P_DD=3.3e-13 * N_D * N_D * sigma_v_dd
+     - P_DT=5.6e-13 * N_D * N_T * sigma_v_DT
+     - P_DHe3=2.9e-12 * N_D * N_He3 * sigma_v_DHe3
     - power transfer between electrons and ion
 
 
