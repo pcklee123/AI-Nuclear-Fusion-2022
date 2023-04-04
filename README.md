@@ -27,9 +27,9 @@ Original code in 2021 by Hilary,Yin Yue and Chloe, extensive improvements by Sam
 ## Usage
 
 ## Todo
--Setup particles for hot rod project
--Setup particles for hot plate project 
--Setup particles for MagLIF
+- Setup particles for hot rod project
+- Setup particles for hot plate project 
+- Setup particles for MagLIF
     - Two sets of plasmas similar to hot rod project
         - 1. Low density plasma cylinder
         - 2. High density thin cylindrical shell around plasma cylinder.
